@@ -21,7 +21,7 @@ contract DDiscord is ERC721 {
     mapping(uint256 => mapping(address => bool)) public hasJoined;
 
     modifier onlyOwner() {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Not Owner");
         _;
     }
 
@@ -48,10 +48,13 @@ contract DDiscord is ERC721 {
     function mint(uint256 _id) public payable {
         // Join Channel
         //Mint NFT
-        require(_id != 0);
-        require(_id <= totalChannels.current());
-        require(hasJoined[_id][msg.sender] == false);
-        require(msg.value >= channels[_id].cost);
+        require(_id != 0, "Id can't be Zero");
+        require(
+            _id <= totalChannels.current(),
+            "Id can't be greater than totalChannels"
+        );
+        require(hasJoined[_id][msg.sender] == false, "Already Joined");
+        require(msg.value >= channels[_id].cost, "Insufficient balance");
 
         hasJoined[_id][msg.sender] = true;
         totalSupply.increment();

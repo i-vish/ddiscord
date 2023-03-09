@@ -54,6 +54,22 @@ describe("DDiscord", function () {
       expect(channel.name).to.be.equal(CHANNEL_NAME);
       expect(channel.cost).to.be.equal(tokens(1));
     });
+
+    describe("Creating Channels - User", () => {
+      it("errors if sender is not owner", async () => {
+        // Setup Accounts
+        [deployer, user] = await ethers.getSigners();
+
+        // Deploy Contract
+        const Dapp = await ethers.getContractFactory("DDiscord");
+        ddiscord = await Dapp.deploy(NAME, SYMBOL);
+
+        // Create Channel
+        await expect(
+          ddiscord.connect(user).createChannel("user", tokens(1))
+        ).to.be.revertedWith("Not Owner");
+      });
+    });
   });
 
   describe("Joining Channels", () => {
